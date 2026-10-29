@@ -1,7 +1,10 @@
 package app.wikisearch.userTools;
 
 import app.wikisearch.service.WikiService;
+import app.wikisearch.wikiexeption.WikiException;
+
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -25,8 +28,23 @@ public class ConsoleApp {
         continue;
       }
 
-      List<String> articles = wikiService.search(inputArticle);
-      if (articles.equals(null)) {
+      List<String> articles;
+      try {
+        articles = wikiService.search(inputArticle);
+      } catch (WikiException e) {
+        System.out.println(e.getMessage());
+        continue;
+      } catch (IOException e) {
+        System.out.println("Сетевая ошибка: " + e.getMessage());
+        continue;
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        System.out.println("Прервано");
+        continue;
+      }
+
+      if (articles.isEmpty()) {
+        System.out.println("Ничего не найдено(");
         continue;
       }
 
@@ -46,7 +64,7 @@ public class ConsoleApp {
       try {
         articleId = Integer.parseInt(inputIdArticle);
       } catch (NumberFormatException e) {
-        System.err.println("Неверный ввод(скорее всего введена не цифра)");
+        System.out.println("Неверный ввод(скорее всего введена не цифра)");
         continue;
       }
 
@@ -54,7 +72,7 @@ public class ConsoleApp {
         String articleTitle = articles.get(articleId - 1);
         openInBrowser(articleTitle);
       } else {
-        System.err.println("Выход за пределы количества статей");
+        System.out.println("Выход за пределы количества статей");
       }
     }
   }

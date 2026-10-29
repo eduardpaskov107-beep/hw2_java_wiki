@@ -6,6 +6,8 @@ public class WikiException extends Exception {
     TooManyRequests,
     ServerError,
     Forbidden,
+    JsonError,
+    ApiError,
     Unknown
   }
 
@@ -19,19 +21,25 @@ public class WikiException extends Exception {
   public String getMessage() {
     switch (reason) {
       case NotFound -> {
-        return "WikiExeption: 404 Not Found";
+        return "WikiExсeption: 404 Not Found";
       }
       case TooManyRequests -> {
-        return "WikiExeption: 429 Too Many Requests";
+        return "WikiExсeption: 429 Too Many Requests";
       }
       case ServerError -> {
-        return "WikiExeption: 5xx Server Error";
+        return "WikiExсeption: 5xx Server Error";
       }
       case Forbidden -> {
-        return "WikiExeption: 403 Forbidden";
+        return "WikiExсeption: 403 Forbidden";
+      }
+      case JsonError -> {
+        return "WikiExсeption: Invalid Json response";
+      }
+      case ApiError -> {
+        return "WikiExсeption: Api Error in Json response";
       }
       default -> {
-        return "WikiExeption: Unknown Error";
+        return "WikiExсeption: Unknown Error";
       }
     }
   }

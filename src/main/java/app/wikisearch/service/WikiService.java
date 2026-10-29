@@ -10,41 +10,26 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class WikiService {
-  private ParseResponse parseResponse;
 
-  public List<String> search(String query) {
+  public List<String> search(String query) throws IOException, InterruptedException, WikiException {
     HttpResponse<String> response;
 
-    try {
-      response = getResponse(query);
-    } catch (IOException e) {
-      System.err.println("IOException: Network error");
-      return null;
-    } catch (InterruptedException e) {
-      System.err.println("InterruptedException: App was interrupted");
-      return null;
-    }
+    response = getResponse(query);
+    checkStatus(response);
 
-    try {
-      checkStatus(response);
-    } catch (WikiException e) {
-      System.out.println(e.getMessage());
-      return null;
-    }
+    ParseResponse parseResponse = new ParseResponse(response.body());
 
-    parseResponse = new ParseResponse(response.body());
+    List<String> articles;
 
-    List<String> articles = new ArrayList<>();
     try {
       articles = parseResponse.getArticles();
     } catch (JsonProcessingException e) {
-      System.err.println("JsonProcessingException: " + e.getMessage());
-      return null;
+      throw new WikiException(WikiException.Reason.JsonError);
     }
+
     return articles;
   }
 
