@@ -34,7 +34,7 @@ public class ParseResponse {
       return List.of();
     }
     for (JsonNode article : jsonNode) {
-      String title = article.get("title").asText();
+      String title = article.path("title").asText();
       articles.add(title);
     }
 

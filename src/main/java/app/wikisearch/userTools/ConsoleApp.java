@@ -16,11 +16,7 @@ public class ConsoleApp {
   private WikiService wikiService = new WikiService();
 
   public void start() {
-    System.out.println(
-        """
-                Приветсвуем вас, сударь, в программе
-                ВИКИПоиск
-               """);
+    System.out.println("Приветсвуем");
     while (true) {
       System.out.print("\nВведите запрос: ");
       String inputArticle = scanner.nextLine();

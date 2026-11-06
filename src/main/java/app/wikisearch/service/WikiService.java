@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class WikiService {
+  private static HttpClient client = HttpClient.newHttpClient();
 
   public List<String> search(String query) throws IOException, InterruptedException, WikiException {
     HttpResponse<String> response;
@@ -37,7 +38,7 @@ public class WikiService {
     String url =
         "https://ru.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch="
             + URLEncoder.encode(query, StandardCharsets.UTF_8);
-    HttpClient client = HttpClient.newHttpClient();
+
 
     HttpRequest request =
         HttpRequest.newBuilder()
@@ -49,7 +50,7 @@ public class WikiService {
     return client.send(request, HttpResponse.BodyHandlers.ofString());
   }
 
-  public void checkStatus(HttpResponse<String> response) throws WikiException {
+  private void checkStatus(HttpResponse<String> response) throws WikiException {
     switch (response.statusCode()) {
       case 200 -> {
         return;
