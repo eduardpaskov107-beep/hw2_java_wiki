@@ -1,6 +1,6 @@
 package app.wikisearch.service;
 
-import app.wikisearch.wikiexeption.WikiException;
+import app.wikisearch.wikiexception.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class WikiService {
-  private static HttpClient client = HttpClient.newHttpClient();
+  private static final HttpClient client = HttpClient.newHttpClient();
 
   public List<String> search(String query) throws IOException, InterruptedException, WikiException {
     HttpResponse<String> response;
@@ -28,15 +28,14 @@ public class WikiService {
     try {
       articles = parseResponse.getArticles();
     } catch (JsonProcessingException e) {
-      throw new WikiException(WikiException.Reason.JsonError);
+      throw new ParseJsonException();
     }
 
     return articles;
   }
 
   private HttpResponse<String> getResponse(String query) throws IOException, InterruptedException {
-    String url =
-        "https://ru.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch="
+    String url = "https://ru.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch="
             + URLEncoder.encode(query, StandardCharsets.UTF_8);
 
 
@@ -56,19 +55,19 @@ public class WikiService {
         return;
       }
       case 403 -> {
-        throw new WikiException(WikiException.Reason.Forbidden);
+        throw new ForbiddenException();
       }
       case 404 -> {
-        throw new WikiException(WikiException.Reason.NotFound);
+        throw new NotFoundException();
       }
       case 429 -> {
-        throw new WikiException(WikiException.Reason.TooManyRequests);
+        throw new TooManyRequestsException();
       }
       default -> {
         if (response.statusCode() >= 500) {
-          throw new WikiException(WikiException.Reason.ServerError);
+          throw new ServerException();
         }
-        throw new WikiException(WikiException.Reason.Unknown);
+        throw new UnknownException();
       }
     }
   }

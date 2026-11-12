@@ -1,6 +1,7 @@
 package app.wikisearch.service;
 
-import app.wikisearch.wikiexeption.WikiException;
+import app.wikisearch.wikiexception.ApiException;
+import app.wikisearch.wikiexception.WikiException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParseResponse {
-  private String response;
-  private static ObjectMapper mapper = new ObjectMapper();
+  private final String response;
+  private static final ObjectMapper mapper = new ObjectMapper();
 
   public ParseResponse(String response) {
     this.response = response;
@@ -25,7 +26,7 @@ public class ParseResponse {
     JsonNode jsonNode = mapper.readTree(response);
     JsonNode error = jsonNode.path("error");
     if (!error.isMissingNode()) {
-      throw new WikiException(WikiException.Reason.ApiError);
+      throw new ApiException();
     }
 
     jsonNode = jsonNode.path("query").path("search");

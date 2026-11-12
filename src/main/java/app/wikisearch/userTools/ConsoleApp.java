@@ -1,7 +1,7 @@
 package app.wikisearch.userTools;
 
 import app.wikisearch.service.WikiService;
-import app.wikisearch.wikiexeption.WikiException;
+import app.wikisearch.wikiexception.WikiException;
 
 import java.awt.*;
 import java.io.IOException;
@@ -12,16 +12,20 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
-  private Scanner scanner = new Scanner(System.in);
-  private WikiService wikiService = new WikiService();
+  private static final Scanner scanner = new Scanner(System.in);
+  private static final WikiService wikiService = new WikiService();
 
   public void start() {
     System.out.println("Приветсвуем");
     while (true) {
-      System.out.print("\nВведите запрос: ");
+      System.out.print("\nВведите запрос(0 - выйти): ");
       String inputArticle = scanner.nextLine();
-      if (inputArticle.trim().isEmpty()) {
+      if (isValidInput(inputArticle)) {
         continue;
+      }
+
+      if (inputArticle.trim().equals("0")) {
+        break;
       }
 
       List<String> articles;
@@ -34,7 +38,6 @@ public class ConsoleApp {
         System.out.println("Сетевая ошибка: " + e.getMessage());
         continue;
       } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
         System.out.println("Прервано");
         continue;
       }
@@ -52,7 +55,7 @@ public class ConsoleApp {
       System.out.print("\nВведите номер статьи (пустая строка чтобы выйти): ");
       String inputIdArticle = scanner.nextLine();
 
-      if (inputIdArticle.trim().isEmpty()) {
+      if (isValidInput(inputIdArticle)) {
         continue;
       }
 
@@ -81,7 +84,11 @@ public class ConsoleApp {
       Desktop.getDesktop().browse(new URI(url));
       System.out.println("Открывается: " + url);
     } catch (Exception e) {
-      System.err.println("Не удалось открыть браузер: " + e.getMessage());
+      System.out.println("Не удалось открыть браузер: " + e.getMessage());
     }
+  }
+
+  private boolean isValidInput(String articleTitle) {
+    return articleTitle.trim().isEmpty();
   }
 }
