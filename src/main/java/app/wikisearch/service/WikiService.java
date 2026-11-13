@@ -14,6 +14,7 @@ import java.util.List;
 
 public class WikiService {
   private static final HttpClient client = HttpClient.newHttpClient();
+  private static final ParseResponse parseResponse = new ParseResponse();
 
   public List<String> search(String query) throws IOException, InterruptedException, WikiException {
     HttpResponse<String> response;
@@ -21,12 +22,10 @@ public class WikiService {
     response = getResponse(query);
     checkStatus(response);
 
-    ParseResponse parseResponse = new ParseResponse(response.body());
-
     List<String> articles;
 
     try {
-      articles = parseResponse.getArticles();
+      articles = parseResponse.getArticles(response.body());
     } catch (JsonProcessingException e) {
       throw new ParseJsonException();
     }
